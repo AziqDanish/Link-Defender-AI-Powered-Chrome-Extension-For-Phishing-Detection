@@ -1,0 +1,408 @@
+#link-defender-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 20, 30, 0.55);
+  z-index: 2147483647;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  animation: ld-fade-in 0.15s ease-out;
+}
+
+@keyframes ld-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.ld-box {
+  background: #fff;
+  border-radius: 14px;
+  padding: 28px 32px;
+  max-width: 420px;
+  width: 90%;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+  text-align: center;
+}
+
+.ld-spinner {
+  width: 32px;
+  height: 32px;
+  margin: 0 auto 14px;
+  border: 3px solid #e2e8f0;
+  border-top-color: #2962ff;
+  border-radius: 50%;
+  animation: ld-spin 0.8s linear infinite;
+}
+
+@keyframes ld-spin {
+  to { transform: rotate(360deg); }
+}
+
+.ld-text {
+  color: #334155;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.ld-warning .ld-icon {
+  font-size: 40px;
+  margin-bottom: 8px;
+  display: inline-block;
+}
+
+.ld-warning .ld-title {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 10px;
+  color: #1e293b;
+}
+
+/* ---- Suspicious / Dangerous re-theme: colored card, not a white box with
+   colored text. Border + tinted gradient + colored glow make the severity
+   readable at a glance, before anyone reads a word. ---- */
+.ld-warning.ld-danger {
+  background: linear-gradient(160deg, #fff1f1 0%, #ffdada 100%);
+  border: 2px solid #f87171;
+  box-shadow: 0 20px 55px rgba(220, 38, 38, 0.35), 0 0 0 5px rgba(220, 38, 38, 0.07);
+}
+
+.ld-warning.ld-suspicious {
+  background: linear-gradient(160deg, #fff8ec 0%, #ffe6c2 100%);
+  border: 2px solid #fb923c;
+  box-shadow: 0 20px 55px rgba(217, 119, 6, 0.3), 0 0 0 5px rgba(217, 119, 6, 0.07);
+}
+
+.ld-warning.ld-danger .ld-title { color: #b91c1c; }
+.ld-warning.ld-suspicious .ld-title { color: #b45309; }
+
+/* Icon animation — a shake reads as "alarm", a pulse reads as "caution".
+   transform-only, GPU-composited, no layout cost. */
+.ld-warning.ld-danger .ld-icon { animation: ld-shake 0.6s ease-in-out infinite; }
+.ld-warning.ld-suspicious .ld-icon { animation: ld-pulse 1.2s ease-in-out infinite; }
+
+@keyframes ld-shake {
+  0%, 100% { transform: rotate(0deg); }
+  20% { transform: rotate(-10deg); }
+  40% { transform: rotate(9deg); }
+  60% { transform: rotate(-7deg); }
+  80% { transform: rotate(6deg); }
+}
+
+@keyframes ld-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.18); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ld-warning .ld-icon,
+  .ld-spark,
+  .ld-safe-icon { animation: none !important; }
+}
+
+.ld-url {
+  word-break: break-all;
+  font-size: 12px;
+  background: #f1f5f9;
+  padding: 8px 10px;
+  border-radius: 8px;
+  color: #475569;
+  margin-bottom: 12px;
+}
+
+.ld-warning.ld-danger .ld-url { background: rgba(220, 38, 38, 0.09); color: #7f1d1d; }
+.ld-warning.ld-suspicious .ld-url { background: rgba(217, 119, 6, 0.1); color: #7c3d0a; }
+
+.ld-reasons {
+  text-align: left;
+  font-size: 13px;
+  color: #334155;
+  margin: 0 0 10px;
+  padding-left: 20px;
+}
+
+.ld-reasons li { margin-bottom: 4px; }
+
+.ld-warning.ld-danger .ld-reasons { color: #7f1d1d; }
+.ld-warning.ld-suspicious .ld-reasons { color: #7c3d0a; }
+
+.ld-sources {
+  font-size: 11px;
+  color: #94a3b8;
+  margin-bottom: 18px;
+}
+
+.ld-warning.ld-danger .ld-sources { color: #b91c1c; opacity: 0.75; }
+.ld-warning.ld-suspicious .ld-sources { color: #b45309; opacity: 0.75; }
+
+/* Feature 1: Risk Score */
+.ld-score-box {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  background: #f8fafc;
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin-bottom: 12px;
+}
+
+.ld-warning.ld-danger .ld-score-box { background: rgba(220, 38, 38, 0.09); }
+.ld-warning.ld-suspicious .ld-score-box { background: rgba(217, 119, 6, 0.1); }
+
+.ld-score-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.ld-warning.ld-danger .ld-score-label { color: #b91c1c; }
+.ld-warning.ld-suspicious .ld-score-label { color: #b45309; }
+
+.ld-score-value {
+  font-size: 22px;
+  font-weight: 800;
+}
+
+.ld-score-value span {
+  font-size: 13px;
+  font-weight: 500;
+  color: #94a3b8;
+}
+
+.ld-score-value.ld-danger { color: #dc2626; }
+.ld-score-value.ld-suspicious { color: #d97706; }
+
+/* Feature 2: Gemini "Why?" button + AI explanation panel */
+.ld-why-btn {
+  width: 100%;
+  padding: 10px 14px;
+  margin-bottom: 12px;
+  border-radius: 8px;
+  border: 1px dashed #94a3b8;
+  background: #fff;
+  color: #334155;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.ld-why-btn:hover { background: #f1f5f9; }
+.ld-why-btn:disabled { opacity: 0.6; cursor: wait; }
+
+.ld-warning.ld-danger .ld-why-btn { border-color: #f87171; color: #b91c1c; background: rgba(255,255,255,0.6); }
+.ld-warning.ld-suspicious .ld-why-btn { border-color: #fb923c; color: #b45309; background: rgba(255,255,255,0.6); }
+.ld-warning.ld-danger .ld-why-btn:hover { background: rgba(220, 38, 38, 0.1); }
+.ld-warning.ld-suspicious .ld-why-btn:hover { background: rgba(217, 119, 6, 0.12); }
+
+.ld-ai-panel {
+  text-align: left;
+  background: #f8fafc;
+  border-radius: 8px;
+  padding: 12px 14px;
+  margin-bottom: 12px;
+  font-size: 13px;
+}
+
+.ld-warning.ld-danger .ld-ai-panel { background: rgba(255,255,255,0.65); }
+.ld-warning.ld-suspicious .ld-ai-panel { background: rgba(255,255,255,0.65); }
+
+.ld-ai-title {
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 6px;
+}
+
+.ld-ai-cached {
+  font-weight: 400;
+  font-size: 11px;
+  color: #94a3b8;
+}
+
+.ld-ai-loading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #64748b;
+}
+
+.ld-mini-spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid #e2e8f0;
+  border-top-color: #2962ff;
+  border-radius: 50%;
+  display: inline-block;
+  animation: ld-spin 0.8s linear infinite;
+}
+
+.ld-ai-meta {
+  color: #475569;
+  margin-bottom: 6px;
+}
+
+.ld-ai-explanation {
+  color: #334155;
+  line-height: 1.4;
+}
+
+.ld-ai-advice {
+  margin-top: 10px;
+  padding: 8px 10px;
+  background: rgba(41, 98, 255, 0.08);
+  border-left: 3px solid #2962ff;
+  border-radius: 4px;
+  color: #1e3a8a;
+  font-weight: 600;
+  font-size: 12.5px;
+}
+
+.ld-ai-error {
+  color: #dc2626;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.ld-ai-fallback {
+  color: #64748b;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.ld-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.ld-btn {
+  flex: 1;
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: none;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.1s ease;
+}
+
+.ld-btn:hover { transform: translateY(-1px); }
+
+.ld-cancel {
+  background: #2962ff;
+  color: #fff;
+}
+
+.ld-warning.ld-danger .ld-cancel { background: #dc2626; }
+.ld-warning.ld-suspicious .ld-cancel { background: #ea580c; }
+
+.ld-btn.ld-proceed {
+  background: #f1f5f9;
+  color: #64748b;
+}
+
+/* Retroactive warning banner — for navigations the click-listener missed */
+#link-defender-banner {
+  position: fixed;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2147483647;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.ld-banner-box {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: #fff;
+  border-radius: 10px;
+  padding: 10px 14px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+  font-size: 13px;
+  max-width: 520px;
+}
+
+.ld-banner-danger { border-left: 4px solid #dc2626; }
+.ld-banner-warn { border-left: 4px solid #d97706; }
+
+.ld-banner-box button {
+  border: none;
+  border-radius: 6px;
+  padding: 5px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-left: 6px;
+}
+
+#ld-banner-back { background: #2962ff; color: #fff; }
+#ld-banner-dismiss { background: #f1f5f9; color: #64748b; }
+
+/* ---- Safe-scan celebration ----
+   Pure CSS "firework": ~10 tiny <span> sparks, each inside a wrapper rotated
+   to a fixed angle, animating outward + fading via transform/opacity only.
+   No image or GIF asset — zero extra bytes, zero decode cost, GPU-composited. */
+.ld-box.ld-safe {
+  position: relative;
+  overflow: visible;
+  background: linear-gradient(160deg, #f0fdf4 0%, #dcfce7 100%);
+  border: 2px solid #86efac;
+  box-shadow: 0 20px 55px rgba(22, 163, 74, 0.32), 0 0 0 5px rgba(22, 163, 74, 0.07);
+  cursor: pointer; /* clicking anywhere skips the wait */
+}
+
+.ld-safe-icon {
+  font-size: 44px;
+  display: inline-block;
+  animation: ld-pop 0.35s ease-out;
+}
+
+.ld-safe-title {
+  font-size: 18px;
+  font-weight: 800;
+  color: #15803d;
+  margin-top: 6px;
+}
+
+.ld-safe-sub {
+  font-size: 13px;
+  color: #166534;
+  margin-top: 4px;
+}
+
+@keyframes ld-pop {
+  0% { transform: scale(0); opacity: 0; }
+  65% { transform: scale(1.2); opacity: 1; }
+  100% { transform: scale(1); }
+}
+
+.ld-firework {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: visible;
+}
+
+.ld-spark-wrap {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+}
+
+.ld-spark {
+  position: absolute;
+  top: 0;
+  left: -3px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  animation: ld-spark-fly 0.9s ease-out forwards;
+}
+
+@keyframes ld-spark-fly {
+  0% { transform: translateY(0); opacity: 1; }
+  100% { transform: translateY(-70px); opacity: 0; }
+}
