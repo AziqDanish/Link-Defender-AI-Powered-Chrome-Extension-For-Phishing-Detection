@@ -1,0 +1,49 @@
+{
+  "manifest_version": 3,
+  "name": "Link Defender",
+  "version": "1.0.0",
+  "description": "Scans links on click against VirusTotal + PhishTank, and alerts a Telegram group when phishing is confirmed.",
+  "permissions": [
+    "storage",
+    "activeTab",
+    "scripting",
+    "notifications",
+    "alarms",
+    "contextMenus",
+    "webNavigation"
+  ],
+  "host_permissions": [
+    "https://www.virustotal.com/*",
+    "https://data.phishtank.com/*",
+    "https://checkurl.phishtank.com/*",
+    "https://api.telegram.org/*",
+    "https://generativelanguage.googleapis.com/*",
+    "<all_urls>"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Link Defender",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "options_page": "options.html",
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "css": ["overlay.css"],
+      "run_at": "document_start"
+    }
+  ],
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
+}
